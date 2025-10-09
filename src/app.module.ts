@@ -6,12 +6,8 @@ import { typeormConfig } from './core/infrastructure/typeorm/typeorm.config';
 import { RedisCacheConfig } from './config/redis.config';
 import { UsersModule } from './modules/users/infrastructure/users.module';
 import { AuthModule } from './modules/auth/infrastructure/auth.module';
-
-// Tus módulos de features
-/* import { UsersModule } from './modules/users/infrastructure/users.module';
-import { AuthModule } from './modules/auth/infrastructure/auth.module';
 import { TasksModule } from './modules/tasks/infrastructure/tasks.module';
- */
+
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -20,7 +16,7 @@ import { TasksModule } from './modules/tasks/infrastructure/tasks.module';
 
     UsersModule,
     AuthModule,
-    /*TasksModule, */
+    TasksModule,
   ],
 })
 export class AppModule {}
