@@ -10,7 +10,7 @@ import * as userRepositortyPort from 'src/modules/users/domain/repositories/user
 @Injectable()
 export class LoginUseCase {
   private readonly accessTtl = 15 * 60;            // 15 min
-  private readonly refreshTtl = 7 * 24 * 60 * 60;  // 7 días
+  private readonly refreshTtl = 7 * 24 * 60 * 60;  // 7 days
 
   constructor(
     @Inject(userRepositortyPort.USER_REPOSITORY) private readonly users: userRepositortyPort.IUserRepository,

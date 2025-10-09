@@ -12,7 +12,10 @@ async function bootstrap() {
     .setTitle('It-Rock-Challenge API')
     .setDescription('API docs')
     .setVersion('1.0')
-    .addBearerAuth() // Authorization: Bearer <token>
+    .addBearerAuth(
+    { type: 'http', scheme: 'bearer', bearerFormat: 'JWT', in: 'header' },
+    'Authorization',
+    )
     .build();
   const doc = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, doc);

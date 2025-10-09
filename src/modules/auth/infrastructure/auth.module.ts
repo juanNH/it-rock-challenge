@@ -18,18 +18,22 @@ import { RedisRefreshStoreAdapter } from './adapters/redis-refresh-store.adapter
 
 import { LoginUseCase } from '../application/use-cases/login.usecase';
 import { RefreshTokensUseCase } from '../application/use-cases/refresh-tokens.usecase';
-import { LogoutUseCase } from '../application/use-cases/logout.usecase';
+import { PassportModule } from '@nestjs/passport';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule,
     UsersModule,
-    JwtModule.register({
+    PassportModule.register({ defaultStrategy: 'jwt' }),
+    JwtModule.registerAsync({
       global: true,
-      secret: process.env.JWT_SECRET ?? 'dev-secret',
-      // El UC define TTL por llamada (15m/7d), aquí puede quedar default general
-      signOptions: { expiresIn: '1h' },
+      inject: [ConfigService],
+      useFactory: (cfg: ConfigService) => ({
+        secret: cfg.get<string>('JWT_SECRET', 'dev-secret'),
+      }),
     }),
-    ThrottlerModule.forRoot([{ ttl: 60, limit: 5 }]),
+    ThrottlerModule.forRoot([{ ttl: 60000, limit: 5 }]),
   ],
   controllers: [AuthController],
   providers: [
@@ -41,8 +45,7 @@ import { LogoutUseCase } from '../application/use-cases/logout.usecase';
     { provide: REFRESH_STORE,   useClass: RedisRefreshStoreAdapter },
     LoginUseCase,
     RefreshTokensUseCase,
-    LogoutUseCase,
   ],
-  exports: [], // normalmente nada; guards/strategy quedan internos
+  exports: [],
 })
 export class AuthModule {}
