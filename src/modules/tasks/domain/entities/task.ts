@@ -1,3 +1,5 @@
+import { ExternalDataSource } from "../enums/data-source.enum";
+
 export type TaskPriority = 'low' | 'medium' | 'high';
 
 export class Task {
@@ -10,5 +12,7 @@ export class Task {
     public userId: string,
     public createdAt?: Date,
     public updatedAt?: Date,
+    public externalSource?: ExternalDataSource | null,
+    public externalId?: string | null,
   ) {}
 }

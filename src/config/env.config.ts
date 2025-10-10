@@ -20,4 +20,12 @@ export const Env = () => ({
     SECRET: process.env.JWT_SECRET ?? 'dev-secret',
     EXPIRES_IN: process.env.JWT_EXPIRES_IN ?? '1h',
   },
+
+  LOG: {
+    PINO_LEVEL: process.env.PINO_LEVEL ?? 'info'
+  },
+  EXTERNAL: {
+    JSONPLACEHOLDER_BASE_URL: process.env.JSONPLACEHOLDER_BASE_URL,
+    TIMEOUT_MS: parseInt(process.env.EXTERNAL_TIMEOUT_MS ?? '10000', 10),
+  },
 });

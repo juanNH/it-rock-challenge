@@ -4,5 +4,4 @@ export interface IRefreshStore {
   save(jti: string, userId: string, ttlSeconds: number): Promise<void>;
   get(jti: string): Promise<string | null>;
   revoke(jti: string): Promise<void>;
-  // (opcional) revokeAll(userId: string): Promise<void>;
 }

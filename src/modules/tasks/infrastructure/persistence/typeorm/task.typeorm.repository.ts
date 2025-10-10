@@ -5,6 +5,7 @@ import { ITaskRepository } from '../../../domain/repositories/task.repository.po
 import { Task } from '../../../domain/entities/task';
 import { TaskOrmEntity } from './task.orm-entity';
 import { TaskMapper } from '../../mappers/task.mapper';
+import { ExternalDataSource } from './../../../../../modules/tasks/domain/enums/data-source.enum';
 
 @Injectable()
 export class TaskTypeormRepository implements ITaskRepository {
@@ -45,4 +46,25 @@ export class TaskTypeormRepository implements ITaskRepository {
       .getMany();
     return { data: dataE.map(TaskMapper.toDomain), total };
   }
+
+  async findExistingExternalIdsByUser(userId: string, source: ExternalDataSource, ids: string[]) {
+    if (!ids.length) return [];
+    const rows = await this.repo.createQueryBuilder('t')
+        .select(['t.externalId'])
+        .where('t.user_id = :userId', { userId })
+        .andWhere('t.external_source = :src', { src: source })
+        .andWhere('t.external_id IN (:...ids)', { ids })
+        .getMany();
+        return rows.map(r => r.externalId!);
+    }
+
+    async bulkCreate(tasks: Task[]): Promise<number> {
+        if (!tasks.length) return 0;
+        const res = await this.repo.createQueryBuilder()
+            .insert()
+            .values(tasks.map(TaskMapper.toOrm))
+            .orIgnore()
+            .execute();
+        return res.identifiers?.length ?? tasks.length;
+    }
 }

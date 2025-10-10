@@ -1,3 +1,4 @@
+import { ExternalDataSource } from './../../../../../modules/tasks/domain/enums/data-source.enum';
 import { UserOrmEntity } from './../../../../../modules/users/infrastructure/persistence/typeorm/user.orm-entity';
 import { Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToOne, PrimaryColumn, UpdateDateColumn } from 'typeorm';
 
@@ -7,6 +8,8 @@ export type TaskPriority = 'low' | 'medium' | 'high';
 @Index('IDX_tasks_user', ['userId'])
 @Index('IDX_tasks_priority', ['priority'])
 @Index('IDX_tasks_completed', ['completed'])
+@Index('UQ_tasks_user_source_extid', ['userId','externalSource','externalId'], { unique: true })
+
 export class TaskOrmEntity {
   @PrimaryColumn('uuid') id!: string;
 
@@ -23,6 +26,18 @@ export class TaskOrmEntity {
   @ManyToOne(() => UserOrmEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   user!: UserOrmEntity;
+
+   @Column({
+    name: 'external_source',
+    type: 'enum',
+    enum: ExternalDataSource,
+    enumName: 'external_source_enum',
+    nullable: true,
+  })
+  externalSource?: ExternalDataSource | null;
+
+  @Column({ name: 'external_id', type: 'varchar', nullable: true })
+  externalId?: string | null;
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamptz' }) createdAt!: Date;
   @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' }) updatedAt!: Date;

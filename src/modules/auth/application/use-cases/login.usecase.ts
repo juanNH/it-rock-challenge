@@ -39,7 +39,6 @@ export class LoginUseCase {
     );
 
     await this.refreshStore.save(jti, user.id, this.refreshTtl);
-    // (opcional) user.registerSuccessfulLogin(); await this.users.update(user);
 
     return {
       token_type: 'Bearer',

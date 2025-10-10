@@ -8,7 +8,6 @@ export class RedisRefreshStoreAdapter implements IRefreshStore {
   constructor(@Inject(CACHE_MANAGER) private readonly cache: Cache) {}
 
   async save(jti: string, userId: string, ttlSeconds: number): Promise<void> {
-    // cache-manager-redis-yet usa TTL en segundos
     await this.cache.set(`rt:${jti}`, userId, ttlSeconds);
   }
   async get(jti: string): Promise<string | null> {

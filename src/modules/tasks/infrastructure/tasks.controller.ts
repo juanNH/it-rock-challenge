@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../auth/infrastructure/security/jwt-auth.guard';
 import { CreateTaskDto } from '../application/dto/create-task.dto';
 import { UpdateTaskDto } from '../application/dto/update-task.dto';
@@ -9,6 +9,9 @@ import { CreateTaskUseCase } from '../application/use-cases/create-task.usecase'
 import { GetTaskUseCase } from '../application/use-cases/get-task.usecase';
 import { UpdateTaskUseCase } from '../application/use-cases/update-task.usecase';
 import { DeleteTaskUseCase } from '../application/use-cases/delete-task.usecase';
+import { PopulateTasksUseCase } from '../application/use-cases/populate-tasks.usecase';
+import { PopulateQueryDto } from '../application/dto/populate-query.dto';
+import { ApiKeyGuard } from './../../../common/guards/api-key.guard';
 
 @ApiTags('tasks')
 @ApiBearerAuth('Authorization')
@@ -21,7 +24,16 @@ export class TasksController {
     private readonly getUC: GetTaskUseCase,
     private readonly updateUC: UpdateTaskUseCase,
     private readonly deleteUC: DeleteTaskUseCase,
+    private readonly populateUC: PopulateTasksUseCase,
   ) {}
+  
+  @Get('populate')
+  @ApiOperation({ summary: 'Populate desde API externa (dedupe por externalId)' })
+  @ApiSecurity('api-key')
+  @UseGuards(ApiKeyGuard, JwtAuthGuard)
+  populate(@Req() req: any, @Query() q: PopulateQueryDto) {
+    return this.populateUC.execute(req.user.sub, q.limit);
+  }
 
   @Get()
   @ApiOperation({ summary: 'Listar tareas del usuario autenticado (cache 10 min)' })
@@ -53,4 +65,5 @@ export class TasksController {
   remove(@Req() req: any, @Param('id') id: string) {
     return this.deleteUC.execute(req.user.sub, id, req.user.role);
   }
+  
 }

@@ -3,10 +3,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { UsersModule } from '../../users/infrastructure/users.module';
 
-import { AuthController } from './controllers/auth.controller';
 import { JwtStrategy } from './security/jwt.strategy';
 import { JwtAuthGuard } from './security/jwt-auth.guard';
-import { RolesGuard } from './security/roles.guard';
 
 import { PASSWORD_HASHER } from '../domain/services/password-hasher.port';
 import { TOKEN_SERVICE }   from '../domain/services/token.service.port';
@@ -20,6 +18,7 @@ import { LoginUseCase } from '../application/use-cases/login.usecase';
 import { RefreshTokensUseCase } from '../application/use-cases/refresh-tokens.usecase';
 import { PassportModule } from '@nestjs/passport';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { AuthController } from './auth.controller';
 
 @Module({
   imports: [
@@ -39,7 +38,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
   providers: [
     JwtStrategy,
     JwtAuthGuard,
-    RolesGuard,
     { provide: PASSWORD_HASHER, useClass: BcryptHasherAdapter },
     { provide: TOKEN_SERVICE,   useClass: JwtTokenAdapter },
     { provide: REFRESH_STORE,   useClass: RedisRefreshStoreAdapter },
