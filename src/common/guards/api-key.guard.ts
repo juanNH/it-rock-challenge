@@ -1,4 +1,3 @@
-// src/common/security/api-key.guard.ts
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 
 @Injectable()
